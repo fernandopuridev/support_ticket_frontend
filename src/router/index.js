@@ -5,7 +5,6 @@ import RegisterPage from "@/pages/auth/RegisterPage.vue"
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage.vue"
 import TicketsPage from "@/pages/tickets/TicketsPage.vue"
 import TicketDetailPage from "@/pages/tickets/TicketDetailPage.vue"
-// import AdminTicketsPage from "@/pages/admin/AdminTicketsPage.vue"
 
 const routes = [
   { path: "/login", component: LoginPage, meta: { public: true } },
@@ -13,7 +12,6 @@ const routes = [
   { path: "/forgot-password", component: ForgotPasswordPage, meta: { public: true } },
   { path: "/tickets", component: TicketsPage, meta: { requiresAuth: true } },
   { path: "/tickets/:id", component: TicketDetailPage, meta: { requiresAuth: true } },
-  // { path: "/admin/tickets", component: AdminTicketsPage, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: "/", redirect: "/tickets" }
 ]
 

@@ -1,38 +1,42 @@
-# support_tickets_frontend
+# Support Tickets Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend Vue para o sistema de chamados de suporte técnico, listagem de tickets, tela de detalhe e mensagens entre cliente e suporte. O projeto foi pensado para facilitar a comunicação entre clientes e atendentes para a resolução de dúvidas e problemas em viagens da Amazon Trips 
 
-## Recommended IDE Setup
+## Stack
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Vue 3
+- Vite
+- Vue Router
+- Pinia
+- Axios
 
-## Recommended Browser Setup
+## Funcionalidades
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- login e cadastro
+- listagem de tickets com busca e filtro
+- criação de ticket
+- tela de detalhe com mensagens
 
-## Customize configuration
+## Setup
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+## Build
 
-```sh
+```bash
 npm run build
 ```
+
+## Rotas principais
+
+- `/login`
+- `/register`
+- `/tickets`
+- `/tickets/:id`
+
+## Observações
+
+- o frontend espera a API rodando em `http://localhost:3000`

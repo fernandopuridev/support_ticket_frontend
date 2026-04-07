@@ -87,7 +87,7 @@
             <span class="message-count">{{ messages.length }} mensagens</span>
           </div>
 
-          <div v-if="loadingMessages" class="messages-state">
+          <div v-if="loadingMessages && messages.length === 0" class="messages-state">
             <p>Carregando mensagens...</p>
           </div>
 
@@ -115,7 +115,7 @@
             <textarea
               id="message-body"
               v-model="messageBody"
-              placeholder="Escreva uma atualização para este chamado..."
+              placeholder="Escreva uma mensagem..."
               :disabled="sendingMessage"
               required
             ></textarea>
@@ -130,7 +130,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue"
+import { onMounted, onUnmounted, ref } from "vue"
 import { useRoute } from "vue-router"
 import { useAuthStore } from "@/stores/authStore"
 import { ticketService } from "@/services/ticketService"
@@ -148,15 +148,33 @@ const loadingMessages = ref(true)
 const sendingMessage = ref(false)
 const statusUpdating = ref(false)
 const pageError = ref("")
+const pollingInterval = ref(null)
 
 onMounted(async () => {
   await Promise.all([loadTicket(), loadMessages()])
+  startPolling()
 })
+
+onUnmounted(() => {
+  stopPolling()
+})
+
+function startPolling() {
+  pollingInterval.value = setInterval(async () => {
+    await refreshMessages()
+  }, 3000)
+}
+
+function stopPolling() {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value)
+    pollingInterval.value = null
+  }
+}
 
 async function loadTicket() {
   loadingTicket.value = true
   pageError.value = ""
-
   try {
     const response = await ticketService.getById(route.params.id)
     ticket.value = response.data
@@ -169,7 +187,6 @@ async function loadTicket() {
 
 async function loadMessages() {
   loadingMessages.value = true
-
   try {
     const response = await ticketService.getMessages(route.params.id)
     messages.value = response.data
@@ -180,13 +197,19 @@ async function loadMessages() {
   }
 }
 
-async function handleSendMessage() {
-  if (!messageBody.value.trim()) {
-    return
+async function refreshMessages() {
+  try {
+    const response = await ticketService.getMessages(route.params.id)
+    messages.value = response.data
+  } catch (error) {
+    console.error(error)
   }
+}
+
+async function handleSendMessage() {
+  if (!messageBody.value.trim()) return
 
   sendingMessage.value = true
-
   try {
     const response = await ticketService.createMessage(route.params.id, messageBody.value.trim())
     messages.value.push(response.data)
@@ -199,7 +222,6 @@ async function handleSendMessage() {
 async function handleStatusChange(event) {
   const nextStatus = event.target.value
   statusUpdating.value = true
-
   try {
     const response = await ticketService.updateStatus(route.params.id, nextStatus)
     ticket.value = response.data
@@ -238,7 +260,6 @@ function statusClass(status) {
   gap: 1.25rem;
 }
 
-.detail-header,
 .detail-card,
 .state-card {
   border: 1px solid rgba(190, 203, 214, 0.8);
@@ -257,24 +278,6 @@ function statusClass(status) {
   text-transform: uppercase;
 }
 
-h1,
-h2 {
-  margin: 0;
-}
-
-h1 {
-  font-size: clamp(1.7rem, 2vw, 2.3rem);
-}
-
-h2 {
-  font-size: 1.05rem;
-}
-
-.subtitle {
-  margin: 0.55rem 0 0;
-  color: #607181;
-}
-
 .detail-header {
   display: flex;
   justify-content: space-between;
@@ -282,7 +285,7 @@ h2 {
   gap: 1rem;
   padding: 1.75rem 2rem;
   border-radius: 1.4rem;
-  background: linear-gradient(135deg, #1f2b3f 0%, #202d42 100%);
+  background: linear-gradient(135deg, #2c6428 0%, #6fbf6a 100%);
   color: #fff;
   box-shadow: 0 16px 34px rgba(28, 44, 60, 0.15);
 }
@@ -307,6 +310,15 @@ h2 {
   font-weight: 700;
 }
 
+h1, h2 { margin: 0; }
+h1 { font-size: clamp(1.7rem, 2vw, 2.3rem); }
+h2 { font-size: 1.05rem; }
+
+.subtitle {
+  margin: 0.55rem 0 0;
+  color: #607181;
+}
+
 .header-badges {
   display: flex;
   align-items: flex-start;
@@ -314,9 +326,7 @@ h2 {
   flex-wrap: wrap;
 }
 
-.status-pill,
-.category-pill,
-.message-count {
+.status-pill, .category-pill, .message-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -336,25 +346,10 @@ h2 {
   background: currentColor;
 }
 
-.status-open {
-  color: #18794e;
-  background: #e9f8f0;
-}
-
-.status-progress {
-  color: #a35c00;
-  background: #fff3df;
-}
-
-.status-closed {
-  color: #596b78;
-  background: #edf2f6;
-}
-
-.category-pill {
-  color: #a63e2d;
-  background: #ffe8df;
-}
+.status-open { color: #18794e; background: #e9f8f0; }
+.status-progress { color: #a35c00; background: #fff3df; }
+.status-closed { color: #596b78; background: #edf2f6; }
+.category-pill { color: #a63e2d; background: #ffe8df; }
 
 .detail-layout {
   display: grid;
@@ -362,10 +357,7 @@ h2 {
   gap: 1.25rem;
 }
 
-.detail-card,
-.state-card {
-  padding: 1.4rem;
-}
+.detail-card, .state-card { padding: 1.4rem; }
 
 .card-head {
   display: flex;
@@ -375,27 +367,15 @@ h2 {
   margin-bottom: 1.2rem;
 }
 
-.status-editor {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.status-editor label,
-.composer-label,
-.meta-label {
+.status-editor { display: grid; gap: 0.35rem; }
+.status-editor label, .composer-label, .meta-label {
   color: #607181;
   font-size: 0.8rem;
   font-weight: 700;
 }
 
-.status-editor select,
-.composer textarea,
-.composer button {
-  font: inherit;
-}
-
-.status-editor select,
-.composer textarea {
+.status-editor select, .composer textarea, .composer button { font: inherit; }
+.status-editor select, .composer textarea {
   box-sizing: border-box;
   width: 100%;
   border: 1px solid #cfdae4;
@@ -412,38 +392,17 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.meta-card,
-.description-box,
-.messages-state {
+.meta-card, .description-box, .messages-state {
   border: 1px solid rgba(207, 218, 228, 0.95);
   border-radius: 1.1rem;
   background: rgba(249, 251, 253, 0.9);
 }
 
-.meta-card {
-  display: grid;
-  gap: 0.35rem;
-  padding: 1rem;
-}
-
-.description-box {
-  padding: 1rem;
-}
-
-.description-box p {
-  margin: 0.5rem 0 0;
-  line-height: 1.6;
-  color: #425361;
-}
-
-.conversation-head {
-  margin-bottom: 1rem;
-}
-
-.message-count {
-  color: #1f7f5d;
-  background: #edf7f2;
-}
+.meta-card { display: grid; gap: 0.35rem; padding: 1rem; }
+.description-box { padding: 1rem; }
+.description-box p { margin: 0.5rem 0 0; line-height: 1.6; color: #425361; }
+.conversation-head { margin-bottom: 1rem; }
+.message-count { color: #1f7f5d; background: #edf7f2; }
 
 .messages-state {
   display: grid;
@@ -486,21 +445,9 @@ h2 {
   font-size: 0.8rem;
 }
 
-.message-bubble p {
-  margin: 0;
-  line-height: 1.55;
-}
-
-.composer {
-  display: grid;
-  gap: 0.65rem;
-}
-
-.composer textarea {
-  min-height: 7rem;
-  resize: vertical;
-}
-
+.message-bubble p { margin: 0; line-height: 1.55; }
+.composer { display: grid; gap: 0.65rem; }
+.composer textarea { min-height: 7rem; resize: vertical; }
 .composer button {
   justify-self: end;
   border: 0;
@@ -513,41 +460,14 @@ h2 {
   box-shadow: 0 12px 22px rgba(31, 127, 93, 0.18);
 }
 
-.composer button:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
+.composer button:disabled { opacity: 0.7; }
+.error-card { color: #a13f34; background: rgba(255, 233, 231, 0.9); }
 
-.error-card {
-  color: #a13f34;
-  background: rgba(255, 233, 231, 0.9);
-}
-
-@media (max-width: 900px) {
-  .detail-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
+@media (max-width: 900px) { .detail-layout { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
-  .detail-header,
-  .card-head,
-  .message-meta {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .overview-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .message-bubble {
-    max-width: 100%;
-  }
-
-  .composer button {
-    width: 100%;
-    justify-self: stretch;
-  }
+  .card-head, .message-meta { flex-direction: column; align-items: flex-start; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .message-bubble { max-width: 100%; }
+  .composer button { width: 100%; justify-self: stretch; }
 }
 </style>

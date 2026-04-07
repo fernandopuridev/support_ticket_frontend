@@ -120,6 +120,7 @@ function handleLogout() {
     radial-gradient(circle at top left, rgba(170, 231, 206, 0.45), transparent 28%),
     linear-gradient(180deg, #f4f8fb 0%, #edf3f7 100%);
   display: grid;
+  align-items: start;
   color: #17212b;
 }
 
@@ -128,6 +129,7 @@ function handleLogout() {
   gap: 1.25rem;
   width: min(100%, 76rem);
   margin-inline: auto;
+  align-content: start;
 }
 
 /* 1. Altura reduzida (padding menor) */
