@@ -4,33 +4,33 @@
       <section class="auth-panel auth-panel-form">
         <div class="form-wrap">
           <div class="brand-row">
-            <span class="brand-text">Amazon Trip HelpDesk</span>
+            <span class="brand-text">{{ t("common.appName") }}</span>
           </div>
 
           <div class="form-header">
-            <p class="eyebrow">Login</p>
-            <h1>Faça seu login</h1>
+            <p class="eyebrow">{{ t("auth.login.eyebrow") }}</p>
+            <h1>{{ t("auth.login.title") }}</h1>
           </div>
 
           <form class="auth-form" @submit.prevent="handleLogin">
             <div class="field">
-              <label for="login-email">E-mail *</label>
+              <label for="login-email">{{ t("auth.login.emailLabel") }}</label>
               <input
                 id="login-email"
                 v-model="email"
                 type="email"
-                placeholder="seu@email.com"
+                :placeholder="t('auth.login.emailPlaceholder')"
                 required
               />
             </div>
 
             <div class="field">
-              <label for="login-password">Senha *</label>
+              <label for="login-password">{{ t("auth.login.passwordLabel") }}</label>
               <input
                 id="login-password"
                 v-model="password"
                 type="password"
-                placeholder="Digite sua senha"
+                :placeholder="t('auth.login.passwordPlaceholder')"
                 required
               />
             </div>
@@ -38,21 +38,23 @@
             <div class="form-meta">
               <label class="remember-me">
                 <input type="checkbox" />
-                <span>Lembre de mim</span>
+                <span>{{ t("auth.login.rememberMe") }}</span>
               </label>
               <RouterLink to="/forgot-password" class="meta-link">
-                Esqueceu sua senha?
+                {{ t("auth.login.forgotPassword") }}
               </RouterLink>
             </div>
 
             <p v-if="error" class="feedback error">{{ error }}</p>
 
             <button type="submit" :disabled="loading" class="primary-button">
-              {{ loading ? "Entrando..." : "Entrar" }}
+              {{ loading ? t("auth.login.submitting") : t("auth.login.submit") }}
             </button>
           </form>
 
-          <RouterLink class="secondary-button" to="/register">Nova conta</RouterLink>
+          <RouterLink class="secondary-button" to="/register">
+            {{ t("auth.login.secondaryAction") }}
+          </RouterLink>
         </div>
       </section>
 
@@ -64,10 +66,12 @@
 <script setup>
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import { useAuthStore } from "@/stores/authStore"
 import AuthBrandPanel from "@/components/shared/AuthBrandPanel.vue"
 
 const router = useRouter()
+const { t } = useI18n()
 const auth = useAuthStore()
 
 const email = ref("")
@@ -83,7 +87,7 @@ async function handleLogin() {
     await auth.login(email.value, password.value)
     router.push("/tickets")
   } catch (e) {
-    error.value = "Email ou senha inválidos"
+    error.value = t("auth.login.error")
   } finally {
     loading.value = false
   }

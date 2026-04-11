@@ -2,8 +2,8 @@
   <header class="tickets-header">
     <div class="brand">
       <div>
-        <p class="brand-label">Amazon Trip Helpdesk</p>
-        <h1>Seus Chamados</h1>
+        <p class="brand-label">{{ t("common.appName") }}</p>
+        <h1>{{ t("tickets.header.title") }}</h1>
       </div>
     </div>
 
@@ -12,17 +12,19 @@
         <div class="avatar">{{ userInitial }}</div>
         <span class="user-name">{{ auth.user?.name }}</span>
       </div>
-      <button class="secondary-button" @click="$emit('logout')">Sair</button>
+      <button class="secondary-button" @click="$emit('logout')">{{ t("tickets.header.logout") }}</button>
     </div>
   </header>
 </template>
 
 <script setup>
 import { computed } from "vue"
+import { useI18n } from "vue-i18n"
 import { useAuthStore } from "@/stores/authStore"
 
 defineEmits(["logout"])
 
+const { t } = useI18n()
 const auth = useAuthStore()
 const userInitial = computed(() => auth.user?.name?.charAt(0).toUpperCase() || "?")
 </script>

@@ -4,9 +4,9 @@
       <RouterLink class="ticket-link" :class="borderClass(ticket.status)" :to="`/tickets/${ticket.id}`">
         <div class="ticket-topline">
           <span class="status-pill" :class="statusClass(ticket.status)">
-            {{ TICKET_STATUS[ticket.status] }}
+            {{ translateTicketStatus(ticket.status) }}
           </span>
-          <span class="ticket-number">Ticket #{{ ticket.id }}</span>
+          <span class="ticket-number">{{ t("tickets.list.number", { id: ticket.id }) }}</span>
         </div>
 
         <div class="ticket-main">
@@ -14,12 +14,12 @@
             <h3>{{ ticket.title }}</h3>
             <p class="ticket-description">{{ ticket.description }}</p>
           </div>
-          <span class="category-pill">{{ TICKET_CATEGORIES[ticket.category] }}</span>
+          <span class="category-pill">{{ translateTicketCategory(ticket.category) }}</span>
         </div>
 
         <div class="ticket-footer">
-          <span>Aberto em {{ formatDate(ticket.created_at) }}</span>
-          <span v-if="ticket.user?.name">por {{ ticket.user.name }}</span>
+          <span>{{ t("tickets.list.openedAt", { date: formatDate(ticket.created_at, locale) }) }}</span>
+          <span v-if="ticket.user?.name">{{ t("tickets.list.openedBy", { name: ticket.user.name }) }}</span>
         </div>
       </RouterLink>
     </article>
@@ -27,7 +27,8 @@
 </template>
 
 <script setup>
-import { TICKET_CATEGORIES, TICKET_STATUS } from "@/utils/constants"
+import { useI18n } from "vue-i18n"
+import { translateTicketCategory, translateTicketStatus } from "@/utils/constants"
 import { formatDate } from "@/utils/formatDate"
 
 defineProps({
@@ -36,6 +37,8 @@ defineProps({
     required: true
   }
 })
+
+const { t, locale } = useI18n()
 
 function statusClass(status) {
   return {

@@ -1,0 +1,128 @@
+{
+  "common": {
+    "appName": "Amazon Trip HelpDesk",
+    "back": "Voltar",
+    "send": "Enviar",
+    "loading": "Carregando...",
+    "user": "Usuário",
+    "notProvided": "Não informado"
+  },
+  "auth": {
+    "brand": {
+      "eyebrow": "Portal de atendimento",
+      "title": "Bem vindo ao nosso suporte técnico",
+      "description": "Receba a ajuda dos nossos atendentes para tirar suas dúvidas e resolver qualquer problema relacionado às suas viagens"
+    },
+    "login": {
+      "eyebrow": "Login",
+      "title": "Faça seu login",
+      "emailLabel": "E-mail *",
+      "emailPlaceholder": "Digite seu e-mail",
+      "passwordLabel": "Senha *",
+      "passwordPlaceholder": "Digite sua senha",
+      "rememberMe": "Lembre de mim",
+      "forgotPassword": "Esqueceu sua senha?",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "secondaryAction": "Nova conta",
+      "error": "Email ou senha inválidos"
+    },
+    "register": {
+      "eyebrow": "Cadastro",
+      "title": "Crie sua conta",
+      "nameLabel": "Nome *",
+      "namePlaceholder": "Seu nome",
+      "emailLabel": "E-mail *",
+      "emailPlaceholder": "Digite seu e-mail",
+      "passwordLabel": "Senha *",
+      "passwordPlaceholder": "Crie uma senha",
+      "submit": "Cadastrar",
+      "submitting": "Cadastrando...",
+      "secondaryAction": "Já tenho conta",
+      "error": "Erro ao cadastrar. Verifique os dados e tente novamente."
+    },
+    "forgotPassword": {
+      "eyebrow": "Recuperação",
+      "title": "Esqueceu sua senha?",
+      "emailLabel": "E-mail *",
+      "emailPlaceholder": "Digite seu e-mail",
+      "submit": "Enviar instruções",
+      "submitting": "Enviando...",
+      "secondaryAction": "Voltar ao login",
+      "success": "Email enviado! Verifique sua caixa de entrada.",
+      "error": "Não foi possível enviar o email. Verifique o endereço informado."
+    }
+  },
+  "tickets": {
+    "header": {
+      "title": "Seus Chamados",
+      "logout": "Sair"
+    },
+    "list": {
+      "openedAt": "Aberto em {date}",
+      "openedBy": "por {name}",
+      "number": "Ticket #{id}"
+    },
+    "page": {
+      "newTicket": "Novo Chamado",
+      "searchPlaceholder": "Buscar chamados...",
+      "empty": "Nenhum chamado encontrado.",
+      "loadError": "Erro ao carregar chamados",
+      "createError": "Erro ao criar chamado"
+    },
+    "form": {
+      "eyebrow": "Novo chamado",
+      "title": "Abrir atendimento",
+      "statusChip": "Preencha os campos",
+      "titleLabel": "Título",
+      "descriptionLabel": "Descrição",
+      "categoryLabel": "Categoria",
+      "submit": "Abrir Chamado",
+      "submitting": "Enviando..."
+    },
+    "detail": {
+      "loading": "Carregando chamado...",
+      "backToTickets": "Voltar para chamados",
+      "back": "← Voltar",
+      "number": "Ticket #{id}",
+      "openedBy": "Aberto por {name} em {date}",
+      "overviewEyebrow": "Visão geral",
+      "overviewTitle": "Resumo do chamado",
+      "statusLabel": "Status",
+      "currentStatus": "Status atual",
+      "category": "Categoria",
+      "createdAt": "Criado em",
+      "requester": "Solicitante",
+      "description": "Descrição",
+      "conversationEyebrow": "Conversa",
+      "messagesTitle": "Mensagens",
+      "messagesCount": "{count} mensagens",
+      "messagesLoading": "Carregando mensagens...",
+      "messagesEmpty": "Nenhuma mensagem ainda.",
+      "newMessage": "Nova mensagem",
+      "newMessagePlaceholder": "Escreva uma mensagem...",
+      "sendMessage": "Enviar mensagem",
+      "sendingMessage": "Enviando...",
+      "loadError": "Não foi possível carregar este chamado."
+    },
+    "filters": {
+      "all": "Todos",
+      "open": "Abertos",
+      "in_progress": "Em andamento",
+      "closed": "Fechados"
+    },
+    "status": {
+      "open": "Aberto",
+      "in_progress": "Em andamento",
+      "closed": "Fechado"
+    },
+    "categories": {
+      "reservation": "Reserva",
+      "payment": "Pagamento",
+      "cancellation": "Cancelamento",
+      "information": "Informações",
+      "technical": "Problema técnico",
+      "other": "Outros"
+    }
+  }
+}

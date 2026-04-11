@@ -4,44 +4,44 @@
       <section class="auth-panel auth-panel-form">
         <div class="form-wrap">
           <div class="brand-row">
-            <span class="brand-text">Amazon Trip HelpDesk</span>
+            <span class="brand-text">{{ t("common.appName") }}</span>
           </div>
 
           <div class="form-header">
-            <p class="eyebrow">Cadastro</p>
-            <h1>Crie sua conta</h1>
+            <p class="eyebrow">{{ t("auth.register.eyebrow") }}</p>
+            <h1>{{ t("auth.register.title") }}</h1>
           </div>
 
           <form class="auth-form" @submit.prevent="handleRegister">
             <div class="field">
-              <label for="register-name">Nome *</label>
+              <label for="register-name">{{ t("auth.register.nameLabel") }}</label>
               <input
                 id="register-name"
                 v-model="name"
                 type="text"
-                placeholder="Seu nome"
+                :placeholder="t('auth.register.namePlaceholder')"
                 required
               />
             </div>
 
             <div class="field">
-              <label for="register-email">E-mail *</label>
+              <label for="register-email">{{ t("auth.register.emailLabel") }}</label>
               <input
                 id="register-email"
                 v-model="email"
                 type="email"
-                placeholder="seu@email.com"
+                :placeholder="t('auth.register.emailPlaceholder')"
                 required
               />
             </div>
 
             <div class="field">
-              <label for="register-password">Senha *</label>
+              <label for="register-password">{{ t("auth.register.passwordLabel") }}</label>
               <input
                 id="register-password"
                 v-model="password"
                 type="password"
-                placeholder="Crie uma senha"
+                :placeholder="t('auth.register.passwordPlaceholder')"
                 required
               />
             </div>
@@ -49,11 +49,13 @@
             <p v-if="error" class="feedback error">{{ error }}</p>
 
             <button type="submit" :disabled="loading" class="primary-button">
-              {{ loading ? "Cadastrando..." : "Cadastrar" }}
+              {{ loading ? t("auth.register.submitting") : t("auth.register.submit") }}
             </button>
           </form>
 
-          <RouterLink class="secondary-button" to="/login">Já tenho conta</RouterLink>
+          <RouterLink class="secondary-button" to="/login">
+            {{ t("auth.register.secondaryAction") }}
+          </RouterLink>
         </div>
       </section>
 
@@ -65,10 +67,12 @@
 <script setup>
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import { useAuthStore } from "@/stores/authStore"
 import AuthBrandPanel from "@/components/shared/AuthBrandPanel.vue"
 
 const router = useRouter()
+const { t } = useI18n()
 const auth = useAuthStore()
 
 const name = ref("")
@@ -85,7 +89,7 @@ async function handleRegister() {
     await auth.register(name.value, email.value, password.value)
     router.push("/login")
   } catch (e) {
-    error.value = "Erro ao cadastrar. Verifique os dados e tente novamente."
+    error.value = t("auth.register.error")
   } finally {
     loading.value = false
   }

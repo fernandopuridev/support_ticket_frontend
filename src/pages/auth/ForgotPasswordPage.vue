@@ -4,26 +4,26 @@
       <section class="auth-panel auth-panel-form">
         <div class="form-wrap">
           <div class="brand-row">
-            <span class="brand-text">Amazon Trip HelpDesk</span>
+            <span class="brand-text">{{ t("common.appName") }}</span>
           </div>
 
           <div class="form-header">
-            <p class="eyebrow">Recuperação</p>
-            <h1>Esqueceu sua senha?</h1>
+            <p class="eyebrow">{{ t("auth.forgotPassword.eyebrow") }}</p>
+            <h1>{{ t("auth.forgotPassword.title") }}</h1>
           </div>
 
           <div v-if="success" class="feedback success">
-            <p>Email enviado! Verifique sua caixa de entrada.</p>
+            <p>{{ t("auth.forgotPassword.success") }}</p>
           </div>
 
           <form v-else class="auth-form" @submit.prevent="handleSubmit">
             <div class="field">
-              <label for="forgot-email">E-mail *</label>
+              <label for="forgot-email">{{ t("auth.forgotPassword.emailLabel") }}</label>
               <input
                 id="forgot-email"
                 v-model="email"
                 type="email"
-                placeholder="seu@email.com"
+                :placeholder="t('auth.forgotPassword.emailPlaceholder')"
                 required
               />
             </div>
@@ -31,11 +31,13 @@
             <p v-if="error" class="feedback error">{{ error }}</p>
 
             <button type="submit" :disabled="loading" class="primary-button">
-              {{ loading ? "Enviando..." : "Enviar instruções" }}
+              {{ loading ? t("auth.forgotPassword.submitting") : t("auth.forgotPassword.submit") }}
             </button>
           </form>
 
-          <RouterLink class="secondary-button" to="/login">Voltar ao login</RouterLink>
+          <RouterLink class="secondary-button" to="/login">
+            {{ t("auth.forgotPassword.secondaryAction") }}
+          </RouterLink>
         </div>
       </section>
 
@@ -46,9 +48,11 @@
 
 <script setup>
 import { ref } from "vue"
+import { useI18n } from "vue-i18n"
 import api from "@/services/api"
 import AuthBrandPanel from "@/components/shared/AuthBrandPanel.vue"
 
+const { t } = useI18n()
 const email = ref("")
 const error = ref("")
 const loading = ref(false)
@@ -64,7 +68,7 @@ async function handleSubmit() {
     })
     success.value = true
   } catch (e) {
-    error.value = "Não foi possível enviar o email. Verifique o endereço informado."
+    error.value = t("auth.forgotPassword.error")
   } finally {
     loading.value = false
   }

@@ -2,48 +2,55 @@
   <form class="ticket-form" @submit.prevent="handleSubmit">
     <div class="form-header">
       <div>
-        <p class="eyebrow">Novo chamado</p>
-        <h2>Abrir atendimento</h2>
+        <p class="eyebrow">{{ t("tickets.form.eyebrow") }}</p>
+        <h2>{{ t("tickets.form.title") }}</h2>
       </div>
-      <span class="status-chip">Preencha os campos</span>
+      <span class="status-chip">{{ t("tickets.form.statusChip") }}</span>
     </div>
     <div class="form-grid">
       <div class="field field-full">
-        <label for="ticket-title">Título</label>
+        <label for="ticket-title">{{ t("tickets.form.titleLabel") }}</label>
         <input id="ticket-title" v-model="form.title" type="text" required />
       </div>
       <div class="field field-full">
-        <label for="ticket-description">Descrição</label>
+        <label for="ticket-description">{{ t("tickets.form.descriptionLabel") }}</label>
         <textarea id="ticket-description" v-model="form.description" required></textarea>
       </div>
       <div class="field">
-        <label for="ticket-category">Categoria</label>
+        <label for="ticket-category">{{ t("tickets.form.categoryLabel") }}</label>
         <select id="ticket-category" v-model="form.category" required>
-          <option value="reservation">Reserva</option>
-          <option value="payment">Pagamento</option>
-          <option value="cancellation">Cancelamento</option>
-          <option value="information">Informacoes</option>
-          <option value="technical">Problema tecnico</option>
-          <option value="other">Outros</option>
+          <option
+            v-for="category in categoryOptions"
+            :key="category.value"
+            :value="category.value"
+          >
+            {{ t(category.labelKey) }}
+          </option>
         </select>
       </div>
     </div>
     <div class="form-actions">
       <button type="submit" :disabled="loading">
-        {{ loading ? "Enviando..." : "Abrir Chamado" }}
+        {{ loading ? t("tickets.form.submitting") : t("tickets.form.submit") }}
       </button>
     </div>
   </form>
 </template>
 <script setup>
 import { reactive } from "vue"
+import { useI18n } from "vue-i18n"
+import { TICKET_CATEGORY_OPTIONS } from "@/utils/constants"
+
 defineProps({
   loading: {
     type: Boolean,
     default: false
   }
 })
+
+const { t } = useI18n()
 const emit = defineEmits(["submit"])
+const categoryOptions = TICKET_CATEGORY_OPTIONS
 const form = reactive({
   title: "",
   description: "",

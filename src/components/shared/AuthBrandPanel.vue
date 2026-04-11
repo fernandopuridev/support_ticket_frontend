@@ -1,15 +1,18 @@
 <template>
   <aside class="auth-panel auth-panel-brand">
     <div class="brand-content">
-      <p class="eyebrow eyebrow-dark">Portal de atendimento</p>
-      <h2>Bem vindo ao nosso suporte técnico</h2>
-      <p class="support-copy">
-        Receba a ajuda dos nossos atendentes para tirar suas dúvidas e resolver
-        qualquer problema relacionado às suas viagens
-      </p>
+      <p class="eyebrow eyebrow-dark">{{ t("auth.brand.eyebrow") }}</p>
+      <h2>{{ t("auth.brand.title") }}</h2>
+      <p class="support-copy">{{ t("auth.brand.description") }}</p>
     </div>
   </aside>
 </template>
+
+<script setup>
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
+</script>
 
 <style scoped>
 .auth-panel-brand {

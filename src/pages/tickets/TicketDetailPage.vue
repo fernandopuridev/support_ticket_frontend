@@ -1,31 +1,34 @@
 <template>
   <main class="ticket-detail-page">
     <section v-if="loadingTicket" class="state-card">
-      <p>Carregando chamado...</p>
+      <p>{{ t("tickets.detail.loading") }}</p>
     </section>
 
     <section v-else-if="pageError" class="state-card error-card">
       <p>{{ pageError }}</p>
-      <RouterLink class="back-link" to="/tickets">Voltar para chamados</RouterLink>
+      <RouterLink class="back-link" to="/tickets">{{ t("tickets.detail.backToTickets") }}</RouterLink>
     </section>
 
     <div v-else-if="ticket" class="ticket-detail-shell">
       <header class="detail-header">
         <div class="detail-header-left">
-          <RouterLink class="back-link" to="/tickets">← Voltar</RouterLink>
-          <p class="eyebrow">Ticket #{{ ticket.id }}</p>
+          <RouterLink class="back-link" to="/tickets">{{ t("tickets.detail.back") }}</RouterLink>
+          <p class="eyebrow">{{ t("tickets.detail.number", { id: ticket.id }) }}</p>
           <h1>{{ ticket.title }}</h1>
           <p class="subtitle">
-            Aberto por {{ ticket.user?.name || "Usuário" }} em {{ formatDate(ticket.created_at) }}
+            {{ t("tickets.detail.openedBy", {
+              name: ticket.user?.name || t("common.user"),
+              date: formatDate(ticket.created_at, locale)
+            }) }}
           </p>
         </div>
 
         <div class="header-badges">
           <span class="status-pill" :class="statusClass(ticket.status)">
-            {{ TICKET_STATUS[ticket.status] }}
+            {{ translateTicketStatus(ticket.status) }}
           </span>
           <span class="category-pill">
-            {{ TICKET_CATEGORIES[ticket.category] }}
+            {{ translateTicketCategory(ticket.category) }}
           </span>
         </div>
       </header>
@@ -34,46 +37,46 @@
         <article class="detail-card overview-card">
           <div class="card-head">
             <div>
-              <p class="eyebrow">Visão geral</p>
-              <h2>Resumo do chamado</h2>
+              <p class="eyebrow">{{ t("tickets.detail.overviewEyebrow") }}</p>
+              <h2>{{ t("tickets.detail.overviewTitle") }}</h2>
             </div>
 
             <div v-if="auth.isAdmin" class="status-editor">
-              <label for="ticket-status">Status</label>
+              <label for="ticket-status">{{ t("tickets.detail.statusLabel") }}</label>
               <select
                 id="ticket-status"
                 :value="ticket.status"
                 :disabled="statusUpdating"
                 @change="handleStatusChange"
               >
-                <option value="open">Aberto</option>
-                <option value="in_progress">Em andamento</option>
-                <option value="closed">Fechado</option>
+                <option value="open">{{ t("tickets.status.open") }}</option>
+                <option value="in_progress">{{ t("tickets.status.in_progress") }}</option>
+                <option value="closed">{{ t("tickets.status.closed") }}</option>
               </select>
             </div>
           </div>
 
           <div class="overview-grid">
             <div class="meta-card">
-              <span class="meta-label">Status atual</span>
-              <strong>{{ TICKET_STATUS[ticket.status] }}</strong>
+              <span class="meta-label">{{ t("tickets.detail.currentStatus") }}</span>
+              <strong>{{ translateTicketStatus(ticket.status) }}</strong>
             </div>
             <div class="meta-card">
-              <span class="meta-label">Categoria</span>
-              <strong>{{ TICKET_CATEGORIES[ticket.category] }}</strong>
+              <span class="meta-label">{{ t("tickets.detail.category") }}</span>
+              <strong>{{ translateTicketCategory(ticket.category) }}</strong>
             </div>
             <div class="meta-card">
-              <span class="meta-label">Criado em</span>
-              <strong>{{ formatDate(ticket.created_at) }}</strong>
+              <span class="meta-label">{{ t("tickets.detail.createdAt") }}</span>
+              <strong>{{ formatDate(ticket.created_at, locale) }}</strong>
             </div>
             <div class="meta-card">
-              <span class="meta-label">Solicitante</span>
-              <strong>{{ ticket.user?.name || "Não informado" }}</strong>
+              <span class="meta-label">{{ t("tickets.detail.requester") }}</span>
+              <strong>{{ ticket.user?.name || t("common.notProvided") }}</strong>
             </div>
           </div>
 
           <div class="description-box">
-            <span class="meta-label">Descrição</span>
+            <span class="meta-label">{{ t("tickets.detail.description") }}</span>
             <p>{{ ticket.description }}</p>
           </div>
         </article>
@@ -81,18 +84,18 @@
         <aside class="detail-card conversation-card">
           <div class="card-head conversation-head">
             <div>
-              <p class="eyebrow">Conversa</p>
-              <h2>Mensagens</h2>
+              <p class="eyebrow">{{ t("tickets.detail.conversationEyebrow") }}</p>
+              <h2>{{ t("tickets.detail.messagesTitle") }}</h2>
             </div>
-            <span class="message-count">{{ messages.length }} mensagens</span>
+            <span class="message-count">{{ t("tickets.detail.messagesCount", { count: messages.length }) }}</span>
           </div>
 
           <div v-if="loadingMessages && messages.length === 0" class="messages-state">
-            <p>Carregando mensagens...</p>
+            <p>{{ t("tickets.detail.messagesLoading") }}</p>
           </div>
 
           <div v-else-if="messages.length === 0" class="messages-state">
-            <p>Nenhuma mensagem ainda.</p>
+            <p>{{ t("tickets.detail.messagesEmpty") }}</p>
           </div>
 
           <div v-else class="messages-list">
@@ -103,24 +106,24 @@
               :class="{ 'message-self': message.user?.id === auth.user?.id }"
             >
               <div class="message-meta">
-                <strong>{{ message.user?.name || "Usuário" }}</strong>
-                <span>{{ formatDate(message.created_at) }}</span>
+                <strong>{{ message.user?.name || t("common.user") }}</strong>
+                <span>{{ formatDate(message.created_at, locale) }}</span>
               </div>
               <p>{{ message.body }}</p>
             </article>
           </div>
 
           <form class="composer" @submit.prevent="handleSendMessage">
-            <label class="composer-label" for="message-body">Nova mensagem</label>
+            <label class="composer-label" for="message-body">{{ t("tickets.detail.newMessage") }}</label>
             <textarea
               id="message-body"
               v-model="messageBody"
-              placeholder="Escreva uma mensagem..."
+              :placeholder="t('tickets.detail.newMessagePlaceholder')"
               :disabled="sendingMessage"
               required
             ></textarea>
             <button type="submit" :disabled="sendingMessage || !messageBody.trim()">
-              {{ sendingMessage ? "Enviando..." : "Enviar mensagem" }}
+              {{ sendingMessage ? t("tickets.detail.sendingMessage") : t("tickets.detail.sendMessage") }}
             </button>
           </form>
         </aside>
@@ -132,12 +135,14 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue"
 import { useRoute } from "vue-router"
+import { useI18n } from "vue-i18n"
 import { useAuthStore } from "@/stores/authStore"
 import { ticketService } from "@/services/ticketService"
-import { TICKET_CATEGORIES, TICKET_STATUS } from "@/utils/constants"
+import { translateTicketCategory, translateTicketStatus } from "@/utils/constants"
 import { formatDate } from "@/utils/formatDate"
 
 const route = useRoute()
+const { t, locale } = useI18n()
 const auth = useAuthStore()
 
 const ticket = ref(null)
@@ -179,7 +184,7 @@ async function loadTicket() {
     const response = await ticketService.getById(route.params.id)
     ticket.value = response.data
   } catch (error) {
-    pageError.value = "Não foi possível carregar este chamado."
+    pageError.value = t("tickets.detail.loadError")
   } finally {
     loadingTicket.value = false
   }

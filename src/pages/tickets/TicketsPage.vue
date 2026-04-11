@@ -8,12 +8,16 @@
       <section class="filters-panel">
         <div class="filters-topline">
           <button type="button" class="new-ticket-button" @click="showForm = !showForm">
-            Novo Chamado
+            {{ t("tickets.page.newTicket") }}
           </button>
 
           <div class="search-box">
             <span class="search-icon" aria-hidden="true">⌕</span>
-            <input v-model="searchTerm" type="search" placeholder="Buscar chamados..." />
+            <input
+              v-model="searchTerm"
+              type="search"
+              :placeholder="t('tickets.page.searchPlaceholder')"
+            />
           </div>
         </div>
 
@@ -26,7 +30,7 @@
             :class="{ active: statusFilter === option.value }"
             @click="statusFilter = option.value"
           >
-            {{ option.label }}
+            {{ t(option.labelKey) }}
           </button>
         </div>
       </section>
@@ -34,7 +38,7 @@
       <p v-if="error" class="feedback error">{{ error }}</p>
 
       <div v-if="filteredTickets.length === 0" class="empty-state">
-        <p>Nenhum chamado encontrado.</p>
+        <p>{{ t("tickets.page.empty") }}</p>
       </div>
 
       <TicketList v-else :tickets="filteredTickets" />
@@ -45,13 +49,16 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
+import { useI18n } from "vue-i18n"
 import CreateTicketForm from "@/components/tickets/CreateTicketForm.vue"
 import TicketList from "@/components/tickets/TicketList.vue"
 import TicketsHeader from "@/components/tickets/TicketsHeader.vue"
 import { useAuthStore } from "@/stores/authStore"
 import { ticketService } from "@/services/ticketService"
+import { TICKET_FILTER_OPTIONS } from "@/utils/constants"
 
 const router = useRouter()
+const { t } = useI18n()
 const auth = useAuthStore()
 
 const tickets = ref([])
@@ -61,12 +68,7 @@ const showForm = ref(false)
 const searchTerm = ref("")
 const statusFilter = ref("all")
 
-const filterOptions = [
-  { label: "Todos", value: "all" },
-  { label: "Abertos", value: "open" },
-  { label: "Em andamento", value: "in_progress" },
-  { label: "Fechados", value: "closed" }
-]
+const filterOptions = TICKET_FILTER_OPTIONS
 
 const filteredTickets = computed(() => {
   return tickets.value.filter((ticket) => {
@@ -86,7 +88,7 @@ onMounted(async () => {
     const response = await ticketService.getAll()
     tickets.value = response.data
   } catch (e) {
-    error.value = "Erro ao carregar chamados"
+    error.value = t("tickets.page.loadError")
   }
 })
 
@@ -100,7 +102,7 @@ async function handleCreate(ticketData) {
     const response = await ticketService.getAll()
     tickets.value = response.data
   } catch (e) {
-    error.value = "Erro ao criar chamado"
+    error.value = t("tickets.page.createError")
   } finally {
     loading.value = false
   }
