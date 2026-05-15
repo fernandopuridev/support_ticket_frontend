@@ -1,67 +1,53 @@
 <template>
-  <main class="auth-page">
-    <section class="auth-shell">
-      <section class="auth-panel auth-panel-form">
-        <div class="form-wrap">
-          <div class="brand-row">
-            <span class="brand-text">{{ t("common.appName") }}</span>
-          </div>
-
-          <div class="form-header">
-            <p class="eyebrow">{{ t("auth.register.eyebrow") }}</p>
-            <h1>{{ t("auth.register.title") }}</h1>
-          </div>
-
-          <form class="auth-form" @submit.prevent="handleRegister">
-            <div class="field">
-              <label for="register-name">{{ t("auth.register.nameLabel") }}</label>
-              <input
-                id="register-name"
-                v-model="name"
-                type="text"
-                :placeholder="t('auth.register.namePlaceholder')"
-                required
-              />
-            </div>
-
-            <div class="field">
-              <label for="register-email">{{ t("auth.register.emailLabel") }}</label>
-              <input
-                id="register-email"
-                v-model="email"
-                type="email"
-                :placeholder="t('auth.register.emailPlaceholder')"
-                required
-              />
-            </div>
-
-            <div class="field">
-              <label for="register-password">{{ t("auth.register.passwordLabel") }}</label>
-              <input
-                id="register-password"
-                v-model="password"
-                type="password"
-                :placeholder="t('auth.register.passwordPlaceholder')"
-                required
-              />
-            </div>
-
-            <p v-if="error" class="feedback error">{{ error }}</p>
-
-            <button type="submit" :disabled="loading" class="primary-button">
-              {{ loading ? t("auth.register.submitting") : t("auth.register.submit") }}
-            </button>
-          </form>
-
-          <RouterLink class="secondary-button" to="/login">
-            {{ t("auth.register.secondaryAction") }}
-          </RouterLink>
+  <AuthPageLayout>
+    <AuthFormShell
+      :eyebrow="t('auth.register.eyebrow')"
+      :title="t('auth.register.title')"
+      :secondary-label="t('auth.register.secondaryAction')"
+      secondary-to="/login"
+    >
+      <form class="auth-form" @submit.prevent="handleRegister">
+        <div class="field">
+          <label for="register-name">{{ t("auth.register.nameLabel") }}</label>
+          <input
+            id="register-name"
+            v-model="name"
+            type="text"
+            :placeholder="t('auth.register.namePlaceholder')"
+            required
+          />
         </div>
-      </section>
 
-      <AuthBrandPanel />
-    </section>
-  </main>
+        <div class="field">
+          <label for="register-email">{{ t("auth.register.emailLabel") }}</label>
+          <input
+            id="register-email"
+            v-model="email"
+            type="email"
+            :placeholder="t('auth.register.emailPlaceholder')"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="register-password">{{ t("auth.register.passwordLabel") }}</label>
+          <input
+            id="register-password"
+            v-model="password"
+            type="password"
+            :placeholder="t('auth.register.passwordPlaceholder')"
+            required
+          />
+        </div>
+
+        <AuthFeedback :message="error" variant="error" />
+
+        <button type="submit" :disabled="loading" class="primary-button">
+          {{ loading ? t("auth.register.submitting") : t("auth.register.submit") }}
+        </button>
+      </form>
+    </AuthFormShell>
+  </AuthPageLayout>
 </template>
 
 <script setup>
@@ -69,7 +55,9 @@ import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useI18n } from "vue-i18n"
 import { useAuthStore } from "@/stores/authStore"
-import AuthBrandPanel from "@/components/shared/AuthBrandPanel.vue"
+import AuthFeedback from "@/components/auth/AuthFeedback.vue"
+import AuthFormShell from "@/components/auth/AuthFormShell.vue"
+import AuthPageLayout from "@/components/auth/AuthPageLayout.vue"
 
 const router = useRouter()
 const { t } = useI18n()
@@ -95,156 +83,3 @@ async function handleRegister() {
   }
 }
 </script>
-
-<style scoped>
-.auth-page {
-  min-height: 100vh;
-  background: #f8fafc;
-}
-
-.auth-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1.08fr 1fr;
-}
-
-.auth-panel {
-  min-width: 0;
-}
-
-.auth-panel-form {
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  background: #fbfcfd;
-}
-
-.form-wrap {
-  width: min(100%, 22rem);
-  display: grid;
-  gap: 1.6rem;
-}
-
-.brand-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-text {
-  color: #0bb986;
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 0.35rem;
-  color: #66758a;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.form-header h1 {
-  margin: 0;
-  color: #1d2f4d;
-  font-size: clamp(2rem, 3vw, 2.6rem);
-  line-height: 1.02;
-}
-
-.auth-form {
-  display: grid;
-  gap: 1rem;
-}
-
-.field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-label {
-  color: #27354b;
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-input {
-  box-sizing: border-box;
-  width: 100%;
-  border: 1px solid #cbd7e4;
-  border-radius: 0.75rem;
-  background: #fff;
-  color: #17212b;
-  padding: 0.95rem 1rem;
-  font: inherit;
-}
-
-input:focus {
-  outline: 2px solid rgba(11, 185, 134, 0.18);
-  border-color: #83d8be;
-}
-
-.feedback {
-  margin: 0;
-  padding: 0.8rem 0.95rem;
-  border-radius: 1rem;
-  font-weight: 600;
-}
-
-.error {
-  background: #ffe9e7;
-  color: #a13f34;
-}
-
-.primary-button,
-.secondary-button {
-  box-sizing: border-box;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 3.5rem;
-  border: 0;
-  border-radius: 999px;
-  padding: 1rem 1.2rem;
-  line-height: 1;
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.primary-button {
-  background: #202d42;
-  color: #fff;
-  cursor: pointer;
-}
-
-.primary-button:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
-
-.secondary-button {
-  background: #eef2f7;
-  color: #202d42;
-}
-
-@media (max-width: 980px) {
-  .auth-shell {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .auth-panel-form {
-    padding: 1.5rem;
-  }
-
-  .form-wrap {
-    width: 100%;
-  }
-}
-</style>
